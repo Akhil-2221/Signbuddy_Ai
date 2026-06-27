@@ -488,10 +488,9 @@ class RealSignClassifier(SignClassifier):
 
         vectors = [landmark_frame_to_vector(f) for f in frames]
         seq     = np.stack(vectors, axis=0).astype(np.float32)
-        T, F    = seq.shape
-
+        T, feature_dim = seq.shape
         if T < self._max_seq_len:
-            pad = np.zeros((self._max_seq_len - T, F), dtype=np.float32)
+            pad = np.zeros((self._max_seq_len - T, feature_dim), dtype=np.float32)
             seq = np.concatenate([seq, pad], axis=0)
         else:
             start = (T - self._max_seq_len) // 2
