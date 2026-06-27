@@ -16,4 +16,21 @@ export default [
       "no-undef": "error",
     },
   },
+
+  // Jest test files
+  {
+    files: ["src/__tests__/**/*.js"],
+    languageOptions: {
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeAll: "readonly",
+        beforeEach: "readonly",
+        afterAll: "readonly",
+        afterEach: "readonly",
+      },
+    },
+  },
 ];

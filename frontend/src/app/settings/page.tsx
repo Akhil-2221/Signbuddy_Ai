@@ -215,7 +215,7 @@ export default function SettingsPage() {
 
         {user.isAnonymous && (
           <div className="rounded-2xl border-2 border-dashed border-signal-100 px-5 py-5 text-center dark:border-ink-700">
-            <p className="font-semibold text-ink-900 dark:text-white">You're using a guest session</p>
+            <p className="font-semibold text-ink-900 dark:text-white">You&apos;re using a guest session</p>
             <p className="mt-1 text-sm text-ink-500 dark:text-signal-100">
               Create an account to save your history and progress across devices.
             </p>
