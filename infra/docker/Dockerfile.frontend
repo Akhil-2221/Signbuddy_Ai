@@ -20,7 +20,7 @@ FROM node:20-alpine
 WORKDIR /app
 RUN addgroup -S signbuddy && adduser -S signbuddy -G signbuddy
 
-COPY --from=builder /app/public ./public
+#COPY --from=builder /app/public ./public
 COPY --from=builder --chown=signbuddy:signbuddy /app/.next/standalone ./
 COPY --from=builder --chown=signbuddy:signbuddy /app/.next/static ./.next/static
 
