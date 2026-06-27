@@ -38,4 +38,3 @@ coverage/
 ai-service/data/processed/
 *.npz
 *.npy
-ai-service/models/*.pth
