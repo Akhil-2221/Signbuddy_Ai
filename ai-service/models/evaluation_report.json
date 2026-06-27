@@ -1,0 +1,1971 @@
+{
+  "summary": {
+    "total_videos": 61,
+    "successful": 61,
+    "errors": 0,
+    "low_confidence": 0,
+    "mean_confidence": 0.929,
+    "min_confidence": 0.9075,
+    "max_confidence": 0.9451,
+    "mean_latency_ms": 3491.77,
+    "min_latency_ms": 2189,
+    "max_latency_ms": 5807,
+    "p95_latency_ms": 4743
+  },
+  "results": [
+    {
+      "video": "Bear.mp4",
+      "prediction": "Bear",
+      "confidence": 0.9359,
+      "low_confidence": false,
+      "latency_ms": 4257,
+      "top_k": [
+        {
+          "label": "Bear",
+          "confidence": 0.9359
+        },
+        {
+          "label": "Clean",
+          "confidence": 0.0018
+        },
+        {
+          "label": "Tiger",
+          "confidence": 0.0016
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Clean",
+          "confidence": 0.0018
+        },
+        {
+          "label": "Tiger",
+          "confidence": 0.0016
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Break.mp4",
+      "prediction": "Break",
+      "confidence": 0.9233,
+      "low_confidence": false,
+      "latency_ms": 3506,
+      "top_k": [
+        {
+          "label": "Break",
+          "confidence": 0.9233
+        },
+        {
+          "label": "Peacock",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Interview",
+          "confidence": 0.0025
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Peacock",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Interview",
+          "confidence": 0.0025
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Brinjal.mp4",
+      "prediction": "Brinjal",
+      "confidence": 0.9154,
+      "low_confidence": false,
+      "latency_ms": 3233,
+      "top_k": [
+        {
+          "label": "Brinjal",
+          "confidence": 0.9154
+        },
+        {
+          "label": "Tea",
+          "confidence": 0.0026
+        },
+        {
+          "label": "Onion",
+          "confidence": 0.0026
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Tea",
+          "confidence": 0.0026
+        },
+        {
+          "label": "Onion",
+          "confidence": 0.0026
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Budget.mp4",
+      "prediction": "Budget",
+      "confidence": 0.9295,
+      "low_confidence": false,
+      "latency_ms": 3561,
+      "top_k": [
+        {
+          "label": "Budget",
+          "confidence": 0.9295
+        },
+        {
+          "label": "Wife",
+          "confidence": 0.0021
+        },
+        {
+          "label": "Tiger",
+          "confidence": 0.0017
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Wife",
+          "confidence": 0.0021
+        },
+        {
+          "label": "Tiger",
+          "confidence": 0.0017
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Busy.mp4",
+      "prediction": "Busy",
+      "confidence": 0.9363,
+      "low_confidence": false,
+      "latency_ms": 4052,
+      "top_k": [
+        {
+          "label": "Busy",
+          "confidence": 0.9363
+        },
+        {
+          "label": "Umbrella",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Knife",
+          "confidence": 0.0019
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Umbrella",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Knife",
+          "confidence": 0.0019
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Cabbage.mp4",
+      "prediction": "Cabbage",
+      "confidence": 0.9285,
+      "low_confidence": false,
+      "latency_ms": 4548,
+      "top_k": [
+        {
+          "label": "Cabbage",
+          "confidence": 0.9285
+        },
+        {
+          "label": "Peacock",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Pour",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Peacock",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Pour",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Carrot.mp4",
+      "prediction": "Carrot",
+      "confidence": 0.9252,
+      "low_confidence": false,
+      "latency_ms": 3559,
+      "top_k": [
+        {
+          "label": "Carrot",
+          "confidence": 0.9252
+        },
+        {
+          "label": "Switch",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Lemon",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Switch",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Lemon",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Cauliflower.mp4",
+      "prediction": "Cauliflower",
+      "confidence": 0.9075,
+      "low_confidence": false,
+      "latency_ms": 4186,
+      "top_k": [
+        {
+          "label": "Cauliflower",
+          "confidence": 0.9075
+        },
+        {
+          "label": "Close",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Vegetables",
+          "confidence": 0.0022
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Close",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Vegetables",
+          "confidence": 0.0022
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Chilli.mp4",
+      "prediction": "Chilli",
+      "confidence": 0.9237,
+      "low_confidence": false,
+      "latency_ms": 2859,
+      "top_k": [
+        {
+          "label": "Chilli",
+          "confidence": 0.9237
+        },
+        {
+          "label": "Key",
+          "confidence": 0.0042
+        },
+        {
+          "label": "Deer",
+          "confidence": 0.0028
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Key",
+          "confidence": 0.0042
+        },
+        {
+          "label": "Deer",
+          "confidence": 0.0028
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Clean.mp4",
+      "prediction": "Clean",
+      "confidence": 0.9227,
+      "low_confidence": false,
+      "latency_ms": 3251,
+      "top_k": [
+        {
+          "label": "Clean",
+          "confidence": 0.9227
+        },
+        {
+          "label": "Maybe",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Lion",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Maybe",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Lion",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Close.mp4",
+      "prediction": "Close",
+      "confidence": 0.9393,
+      "low_confidence": false,
+      "latency_ms": 2779,
+      "top_k": [
+        {
+          "label": "Close",
+          "confidence": 0.9393
+        },
+        {
+          "label": "Peacock",
+          "confidence": 0.0015
+        },
+        {
+          "label": "Chilli",
+          "confidence": 0.0014
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Peacock",
+          "confidence": 0.0015
+        },
+        {
+          "label": "Chilli",
+          "confidence": 0.0014
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Come.mp4",
+      "prediction": "Come",
+      "confidence": 0.9384,
+      "low_confidence": false,
+      "latency_ms": 2509,
+      "top_k": [
+        {
+          "label": "Come",
+          "confidence": 0.9384
+        },
+        {
+          "label": "Tea",
+          "confidence": 0.0025
+        },
+        {
+          "label": "Drink",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Tea",
+          "confidence": 0.0025
+        },
+        {
+          "label": "Drink",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Cook.mp4",
+      "prediction": "Cook",
+      "confidence": 0.9325,
+      "low_confidence": false,
+      "latency_ms": 3446,
+      "top_k": [
+        {
+          "label": "Cook",
+          "confidence": 0.9325
+        },
+        {
+          "label": "Cauliflower",
+          "confidence": 0.002
+        },
+        {
+          "label": "Bear",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Cauliflower",
+          "confidence": 0.002
+        },
+        {
+          "label": "Bear",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Crocodile.mp4",
+      "prediction": "Crocodile",
+      "confidence": 0.9294,
+      "low_confidence": false,
+      "latency_ms": 4594,
+      "top_k": [
+        {
+          "label": "Crocodile",
+          "confidence": 0.9294
+        },
+        {
+          "label": "Man",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Drink",
+          "confidence": 0.0016
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Man",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Drink",
+          "confidence": 0.0016
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Cry.mp4",
+      "prediction": "Cry",
+      "confidence": 0.9372,
+      "low_confidence": false,
+      "latency_ms": 3639,
+      "top_k": [
+        {
+          "label": "Cry",
+          "confidence": 0.9372
+        },
+        {
+          "label": "Writer",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Monkey",
+          "confidence": 0.0016
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Writer",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Monkey",
+          "confidence": 0.0016
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Cucumber.mp4",
+      "prediction": "Cucumber",
+      "confidence": 0.9253,
+      "low_confidence": false,
+      "latency_ms": 3554,
+      "top_k": [
+        {
+          "label": "Cucumber",
+          "confidence": 0.9253
+        },
+        {
+          "label": "Vegetables",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.0024
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Vegetables",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.0024
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Deer.mp4",
+      "prediction": "Deer",
+      "confidence": 0.925,
+      "low_confidence": false,
+      "latency_ms": 4226,
+      "top_k": [
+        {
+          "label": "Deer",
+          "confidence": 0.925
+        },
+        {
+          "label": "Uncle",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Chilli",
+          "confidence": 0.0022
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Uncle",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Chilli",
+          "confidence": 0.0022
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Drink.mp4",
+      "prediction": "Drink",
+      "confidence": 0.9306,
+      "low_confidence": false,
+      "latency_ms": 2501,
+      "top_k": [
+        {
+          "label": "Drink",
+          "confidence": 0.9306
+        },
+        {
+          "label": "Budget",
+          "confidence": 0.0021
+        },
+        {
+          "label": "Uncle",
+          "confidence": 0.0019
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Budget",
+          "confidence": 0.0021
+        },
+        {
+          "label": "Uncle",
+          "confidence": 0.0019
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Elephant.mp4",
+      "prediction": "Elephant",
+      "confidence": 0.9286,
+      "low_confidence": false,
+      "latency_ms": 3042,
+      "top_k": [
+        {
+          "label": "Elephant",
+          "confidence": 0.9286
+        },
+        {
+          "label": "Lemon",
+          "confidence": 0.0035
+        },
+        {
+          "label": "Budget",
+          "confidence": 0.0027
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Lemon",
+          "confidence": 0.0035
+        },
+        {
+          "label": "Budget",
+          "confidence": 0.0027
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Exam.mp4",
+      "prediction": "Exam",
+      "confidence": 0.9281,
+      "low_confidence": false,
+      "latency_ms": 3146,
+      "top_k": [
+        {
+          "label": "Exam",
+          "confidence": 0.9281
+        },
+        {
+          "label": "Cabbage",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Sparrow",
+          "confidence": 0.0023
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Cabbage",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Sparrow",
+          "confidence": 0.0023
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Fedup.mp4",
+      "prediction": "Fedup",
+      "confidence": 0.9217,
+      "low_confidence": false,
+      "latency_ms": 2978,
+      "top_k": [
+        {
+          "label": "Fedup",
+          "confidence": 0.9217
+        },
+        {
+          "label": "Tiger",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Monkey",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Tiger",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Monkey",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Fever.mp4",
+      "prediction": "Fever",
+      "confidence": 0.9375,
+      "low_confidence": false,
+      "latency_ms": 3901,
+      "top_k": [
+        {
+          "label": "Fever",
+          "confidence": 0.9375
+        },
+        {
+          "label": "Cry",
+          "confidence": 0.0029
+        },
+        {
+          "label": "Uncle",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Cry",
+          "confidence": 0.0029
+        },
+        {
+          "label": "Uncle",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Giraffe.mp4",
+      "prediction": "Giraffe",
+      "confidence": 0.9451,
+      "low_confidence": false,
+      "latency_ms": 4570,
+      "top_k": [
+        {
+          "label": "Giraffe",
+          "confidence": 0.9451
+        },
+        {
+          "label": "Radish",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Tea",
+          "confidence": 0.0017
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Radish",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Tea",
+          "confidence": 0.0017
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Give.mp4",
+      "prediction": "Give",
+      "confidence": 0.926,
+      "low_confidence": false,
+      "latency_ms": 2406,
+      "top_k": [
+        {
+          "label": "Give",
+          "confidence": 0.926
+        },
+        {
+          "label": "Thank you",
+          "confidence": 0.0022
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Thank you",
+          "confidence": 0.0022
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Good afternoon.mp4",
+      "prediction": "Good afternoon",
+      "confidence": 0.9163,
+      "low_confidence": false,
+      "latency_ms": 3215,
+      "top_k": [
+        {
+          "label": "Good afternoon",
+          "confidence": 0.9163
+        },
+        {
+          "label": "Karnataka",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Fedup",
+          "confidence": 0.0029
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Karnataka",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Fedup",
+          "confidence": 0.0029
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Good morning.mp4",
+      "prediction": "Good Morning",
+      "confidence": 0.92,
+      "low_confidence": false,
+      "latency_ms": 3188,
+      "top_k": [
+        {
+          "label": "Good Morning",
+          "confidence": 0.92
+        },
+        {
+          "label": "Good afternoon",
+          "confidence": 0.0022
+        },
+        {
+          "label": "Thank you",
+          "confidence": 0.0021
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Good afternoon",
+          "confidence": 0.0022
+        },
+        {
+          "label": "Thank you",
+          "confidence": 0.0021
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Hello.mp4",
+      "prediction": "Hello",
+      "confidence": 0.9242,
+      "low_confidence": false,
+      "latency_ms": 2296,
+      "top_k": [
+        {
+          "label": "Hello",
+          "confidence": 0.9242
+        },
+        {
+          "label": "Tea",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Switch",
+          "confidence": 0.0021
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Tea",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Switch",
+          "confidence": 0.0021
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Hug.mp4",
+      "prediction": "Hug",
+      "confidence": 0.9311,
+      "low_confidence": false,
+      "latency_ms": 2762,
+      "top_k": [
+        {
+          "label": "Hug",
+          "confidence": 0.9311
+        },
+        {
+          "label": "Uncle",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Turtle",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Uncle",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Turtle",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Injury.mp4",
+      "prediction": "Injury",
+      "confidence": 0.9245,
+      "low_confidence": false,
+      "latency_ms": 2387,
+      "top_k": [
+        {
+          "label": "Injury",
+          "confidence": 0.9245
+        },
+        {
+          "label": "Peacock",
+          "confidence": 0.002
+        },
+        {
+          "label": "Pigeon",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Peacock",
+          "confidence": 0.002
+        },
+        {
+          "label": "Pigeon",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Interview.mp4",
+      "prediction": "Interview",
+      "confidence": 0.9357,
+      "low_confidence": false,
+      "latency_ms": 2885,
+      "top_k": [
+        {
+          "label": "Interview",
+          "confidence": 0.9357
+        },
+        {
+          "label": "Vegetables",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Maths",
+          "confidence": 0.0016
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Vegetables",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Maths",
+          "confidence": 0.0016
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Jump.mp4",
+      "prediction": "Jump",
+      "confidence": 0.9305,
+      "low_confidence": false,
+      "latency_ms": 5807,
+      "top_k": [
+        {
+          "label": "Jump",
+          "confidence": 0.9305
+        },
+        {
+          "label": "Pour",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Monkey",
+          "confidence": 0.0016
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Pour",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Monkey",
+          "confidence": 0.0016
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Karnataka.mp4",
+      "prediction": "Karnataka",
+      "confidence": 0.9349,
+      "low_confidence": false,
+      "latency_ms": 2822,
+      "top_k": [
+        {
+          "label": "Karnataka",
+          "confidence": 0.9349
+        },
+        {
+          "label": "Writer",
+          "confidence": 0.0025
+        },
+        {
+          "label": "Good afternoon",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Writer",
+          "confidence": 0.0025
+        },
+        {
+          "label": "Good afternoon",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Key.mp4",
+      "prediction": "Key",
+      "confidence": 0.9183,
+      "low_confidence": false,
+      "latency_ms": 2506,
+      "top_k": [
+        {
+          "label": "Key",
+          "confidence": 0.9183
+        },
+        {
+          "label": "Thank you",
+          "confidence": 0.0027
+        },
+        {
+          "label": "Fedup",
+          "confidence": 0.0026
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Thank you",
+          "confidence": 0.0027
+        },
+        {
+          "label": "Fedup",
+          "confidence": 0.0026
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Knife.mp4",
+      "prediction": "Knife",
+      "confidence": 0.9228,
+      "low_confidence": false,
+      "latency_ms": 4743,
+      "top_k": [
+        {
+          "label": "Knife",
+          "confidence": 0.9228
+        },
+        {
+          "label": "Turtle",
+          "confidence": 0.003
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Turtle",
+          "confidence": 0.003
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Lemon.mp4",
+      "prediction": "Lemon",
+      "confidence": 0.9302,
+      "low_confidence": false,
+      "latency_ms": 2760,
+      "top_k": [
+        {
+          "label": "Lemon",
+          "confidence": 0.9302
+        },
+        {
+          "label": "Carrot",
+          "confidence": 0.003
+        },
+        {
+          "label": "Pour",
+          "confidence": 0.002
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Carrot",
+          "confidence": 0.003
+        },
+        {
+          "label": "Pour",
+          "confidence": 0.002
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Lion.mp4",
+      "prediction": "Lion",
+      "confidence": 0.9358,
+      "low_confidence": false,
+      "latency_ms": 3189,
+      "top_k": [
+        {
+          "label": "Lion",
+          "confidence": 0.9358
+        },
+        {
+          "label": "Tiger",
+          "confidence": 0.0014
+        },
+        {
+          "label": "Man",
+          "confidence": 0.0014
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Tiger",
+          "confidence": 0.0014
+        },
+        {
+          "label": "Man",
+          "confidence": 0.0014
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Man.mp4",
+      "prediction": "Man",
+      "confidence": 0.9311,
+      "low_confidence": false,
+      "latency_ms": 2981,
+      "top_k": [
+        {
+          "label": "Man",
+          "confidence": 0.9311
+        },
+        {
+          "label": "Uncle",
+          "confidence": 0.0041
+        },
+        {
+          "label": "Carrot",
+          "confidence": 0.0031
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Uncle",
+          "confidence": 0.0041
+        },
+        {
+          "label": "Carrot",
+          "confidence": 0.0031
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Maths.mp4",
+      "prediction": "Maths",
+      "confidence": 0.9235,
+      "low_confidence": false,
+      "latency_ms": 3124,
+      "top_k": [
+        {
+          "label": "Maths",
+          "confidence": 0.9235
+        },
+        {
+          "label": "Close",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.0019
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Close",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.0019
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Maybe.mp4",
+      "prediction": "Maybe",
+      "confidence": 0.9216,
+      "low_confidence": false,
+      "latency_ms": 3278,
+      "top_k": [
+        {
+          "label": "Maybe",
+          "confidence": 0.9216
+        },
+        {
+          "label": "Maths",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Clean",
+          "confidence": 0.0022
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Maths",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Clean",
+          "confidence": 0.0022
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Monkey.mp4",
+      "prediction": "Monkey",
+      "confidence": 0.9224,
+      "low_confidence": false,
+      "latency_ms": 2789,
+      "top_k": [
+        {
+          "label": "Monkey",
+          "confidence": 0.9224
+        },
+        {
+          "label": "Tiger",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Still",
+          "confidence": 0.0019
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Tiger",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Still",
+          "confidence": 0.0019
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Onion.mp4",
+      "prediction": "Onion",
+      "confidence": 0.923,
+      "low_confidence": false,
+      "latency_ms": 3524,
+      "top_k": [
+        {
+          "label": "Onion",
+          "confidence": 0.923
+        },
+        {
+          "label": "Cry",
+          "confidence": 0.0039
+        },
+        {
+          "label": "Brinjal",
+          "confidence": 0.0031
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Cry",
+          "confidence": 0.0039
+        },
+        {
+          "label": "Brinjal",
+          "confidence": 0.0031
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Peacock.mp4",
+      "prediction": "Peacock",
+      "confidence": 0.9249,
+      "low_confidence": false,
+      "latency_ms": 2424,
+      "top_k": [
+        {
+          "label": "Peacock",
+          "confidence": 0.9249
+        },
+        {
+          "label": "Close",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.0016
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Close",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Crocodile",
+          "confidence": 0.0016
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Pigeon.mp4",
+      "prediction": "Pigeon",
+      "confidence": 0.9228,
+      "low_confidence": false,
+      "latency_ms": 4759,
+      "top_k": [
+        {
+          "label": "Pigeon",
+          "confidence": 0.9228
+        },
+        {
+          "label": "Sparrow",
+          "confidence": 0.003
+        },
+        {
+          "label": "Cabbage",
+          "confidence": 0.0025
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Sparrow",
+          "confidence": 0.003
+        },
+        {
+          "label": "Cabbage",
+          "confidence": 0.0025
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Pour.mp4",
+      "prediction": "Pour",
+      "confidence": 0.9342,
+      "low_confidence": false,
+      "latency_ms": 2955,
+      "top_k": [
+        {
+          "label": "Pour",
+          "confidence": 0.9342
+        },
+        {
+          "label": "Lemon",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Still",
+          "confidence": 0.0022
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Lemon",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Still",
+          "confidence": 0.0022
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Radish.mp4",
+      "prediction": "Radish",
+      "confidence": 0.9301,
+      "low_confidence": false,
+      "latency_ms": 3047,
+      "top_k": [
+        {
+          "label": "Radish",
+          "confidence": 0.9301
+        },
+        {
+          "label": "Giraffe",
+          "confidence": 0.0033
+        },
+        {
+          "label": "Cry",
+          "confidence": 0.0026
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Giraffe",
+          "confidence": 0.0033
+        },
+        {
+          "label": "Cry",
+          "confidence": 0.0026
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Sparrow.mp4",
+      "prediction": "Sparrow",
+      "confidence": 0.9141,
+      "low_confidence": false,
+      "latency_ms": 3536,
+      "top_k": [
+        {
+          "label": "Sparrow",
+          "confidence": 0.9141
+        },
+        {
+          "label": "Pigeon",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Lion",
+          "confidence": 0.0021
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Pigeon",
+          "confidence": 0.0031
+        },
+        {
+          "label": "Lion",
+          "confidence": 0.0021
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Still.mp4",
+      "prediction": "Still",
+      "confidence": 0.9426,
+      "low_confidence": false,
+      "latency_ms": 4489,
+      "top_k": [
+        {
+          "label": "Still",
+          "confidence": 0.9426
+        },
+        {
+          "label": "Pour",
+          "confidence": 0.0018
+        },
+        {
+          "label": "Chilli",
+          "confidence": 0.0017
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Pour",
+          "confidence": 0.0018
+        },
+        {
+          "label": "Chilli",
+          "confidence": 0.0017
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Switch.mp4",
+      "prediction": "Switch",
+      "confidence": 0.9384,
+      "low_confidence": false,
+      "latency_ms": 3518,
+      "top_k": [
+        {
+          "label": "Switch",
+          "confidence": 0.9384
+        },
+        {
+          "label": "Writer",
+          "confidence": 0.002
+        },
+        {
+          "label": "Still",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Writer",
+          "confidence": 0.002
+        },
+        {
+          "label": "Still",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Tea.mp4",
+      "prediction": "Tea",
+      "confidence": 0.9384,
+      "low_confidence": false,
+      "latency_ms": 4458,
+      "top_k": [
+        {
+          "label": "Tea",
+          "confidence": 0.9384
+        },
+        {
+          "label": "Switch",
+          "confidence": 0.0016
+        },
+        {
+          "label": "Giraffe",
+          "confidence": 0.0015
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Switch",
+          "confidence": 0.0016
+        },
+        {
+          "label": "Giraffe",
+          "confidence": 0.0015
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Temple.mp4",
+      "prediction": "Temple",
+      "confidence": 0.928,
+      "low_confidence": false,
+      "latency_ms": 4592,
+      "top_k": [
+        {
+          "label": "Temple",
+          "confidence": 0.928
+        },
+        {
+          "label": "Close",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Giraffe",
+          "confidence": 0.0017
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Close",
+          "confidence": 0.0019
+        },
+        {
+          "label": "Giraffe",
+          "confidence": 0.0017
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Thank you.mp4",
+      "prediction": "Thank you",
+      "confidence": 0.9282,
+      "low_confidence": false,
+      "latency_ms": 2189,
+      "top_k": [
+        {
+          "label": "Thank you",
+          "confidence": 0.9282
+        },
+        {
+          "label": "Cry",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Lion",
+          "confidence": 0.0016
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Cry",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Lion",
+          "confidence": 0.0016
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Tiger.mp4",
+      "prediction": "Tiger",
+      "confidence": 0.9344,
+      "low_confidence": false,
+      "latency_ms": 4886,
+      "top_k": [
+        {
+          "label": "Tiger",
+          "confidence": 0.9344
+        },
+        {
+          "label": "Lion",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Carrot",
+          "confidence": 0.0014
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Lion",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Carrot",
+          "confidence": 0.0014
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Turtle.mp4",
+      "prediction": "Turtle",
+      "confidence": 0.9429,
+      "low_confidence": false,
+      "latency_ms": 4475,
+      "top_k": [
+        {
+          "label": "Turtle",
+          "confidence": 0.9429
+        },
+        {
+          "label": "Peacock",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Writer",
+          "confidence": 0.0017
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Peacock",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Writer",
+          "confidence": 0.0017
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Umbrella.mp4",
+      "prediction": "Umbrella",
+      "confidence": 0.9365,
+      "low_confidence": false,
+      "latency_ms": 4107,
+      "top_k": [
+        {
+          "label": "Umbrella",
+          "confidence": 0.9365
+        },
+        {
+          "label": "Hug",
+          "confidence": 0.0018
+        },
+        {
+          "label": "Clean",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Hug",
+          "confidence": 0.0018
+        },
+        {
+          "label": "Clean",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Uncle.mp4",
+      "prediction": "Uncle",
+      "confidence": 0.941,
+      "low_confidence": false,
+      "latency_ms": 3402,
+      "top_k": [
+        {
+          "label": "Uncle",
+          "confidence": 0.941
+        },
+        {
+          "label": "Man",
+          "confidence": 0.0033
+        },
+        {
+          "label": "Giraffe",
+          "confidence": 0.0019
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Man",
+          "confidence": 0.0033
+        },
+        {
+          "label": "Giraffe",
+          "confidence": 0.0019
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Vegetables.mp4",
+      "prediction": "Vegetables",
+      "confidence": 0.927,
+      "low_confidence": false,
+      "latency_ms": 3355,
+      "top_k": [
+        {
+          "label": "Vegetables",
+          "confidence": 0.927
+        },
+        {
+          "label": "Interview",
+          "confidence": 0.0026
+        },
+        {
+          "label": "Brinjal",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Interview",
+          "confidence": 0.0026
+        },
+        {
+          "label": "Brinjal",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Volcano.mp4",
+      "prediction": "Volcano",
+      "confidence": 0.9194,
+      "low_confidence": false,
+      "latency_ms": 3666,
+      "top_k": [
+        {
+          "label": "Volcano",
+          "confidence": 0.9194
+        },
+        {
+          "label": "Cabbage",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Peacock",
+          "confidence": 0.0022
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Cabbage",
+          "confidence": 0.0023
+        },
+        {
+          "label": "Peacock",
+          "confidence": 0.0022
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "What is your Name.mp4",
+      "prediction": "What is your Name",
+      "confidence": 0.9315,
+      "low_confidence": false,
+      "latency_ms": 3251,
+      "top_k": [
+        {
+          "label": "What is your Name",
+          "confidence": 0.9315
+        },
+        {
+          "label": "Writer",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Hug",
+          "confidence": 0.0018
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Writer",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Hug",
+          "confidence": 0.0018
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Wife.mp4",
+      "prediction": "Wife",
+      "confidence": 0.9357,
+      "low_confidence": false,
+      "latency_ms": 3070,
+      "top_k": [
+        {
+          "label": "Wife",
+          "confidence": 0.9357
+        },
+        {
+          "label": "Budget",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Cabbage",
+          "confidence": 0.0021
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Budget",
+          "confidence": 0.0024
+        },
+        {
+          "label": "Cabbage",
+          "confidence": 0.0021
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Writer.mp4",
+      "prediction": "Writer",
+      "confidence": 0.9275,
+      "low_confidence": false,
+      "latency_ms": 4044,
+      "top_k": [
+        {
+          "label": "Writer",
+          "confidence": 0.9275
+        },
+        {
+          "label": "Cook",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Tea",
+          "confidence": 0.0017
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Cook",
+          "confidence": 0.0017
+        },
+        {
+          "label": "Tea",
+          "confidence": 0.0017
+        }
+      ],
+      "error": null
+    },
+    {
+      "video": "Wrong.mp4",
+      "prediction": "Wrong",
+      "confidence": 0.9314,
+      "low_confidence": false,
+      "latency_ms": 4216,
+      "top_k": [
+        {
+          "label": "Wrong",
+          "confidence": 0.9314
+        },
+        {
+          "label": "Switch",
+          "confidence": 0.003
+        },
+        {
+          "label": "Karnataka",
+          "confidence": 0.0027
+        }
+      ],
+      "alternatives": [
+        {
+          "label": "Switch",
+          "confidence": 0.003
+        },
+        {
+          "label": "Karnataka",
+          "confidence": 0.0027
+        }
+      ],
+      "error": null
+    }
+  ],
+  "model_path": "C:\\Users\\gagir\\Downloads\\signbuddy-ai\\signbuddy-ai\\ai-service\\models\\best_model.pth",
+  "confidence_threshold": 0.5
+}

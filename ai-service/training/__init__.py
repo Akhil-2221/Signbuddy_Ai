@@ -1,0 +1,1 @@
+"""SignBuddy AI training package."""

@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build outputs
+.next/
+dist/
+build/
+*.egg-info/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Database
+*.sqlite3
+
+# Test coverage
+coverage/
+.pytest_cache/
+
+# Misc
+.turbo/
+# AI model and processed data
+ai-service/data/processed/
+*.npz
+*.npy
+ai-service/models/*.pth

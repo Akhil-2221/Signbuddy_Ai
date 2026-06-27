@@ -1,0 +1,69 @@
+version: "3.9"
+
+# Full local stack: postgres + ai-service + backend + frontend.
+# For day-to-day frontend/backend dev, prefer running each with `npm run dev` /
+# `uvicorn --reload` directly (faster iteration) — this compose file is for
+# integration testing and staging-like runs.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: signbuddy
+      POSTGRES_PASSWORD: signbuddy_dev_password
+      POSTGRES_DB: signbuddy
+    ports:
+      - "5432:5432"
+    volumes:
+      - signbuddy_pg_data:/var/lib/postgresql/data
+      - ../../database/migrations:/docker-entrypoint-initdb.d/1-migrations
+      - ../../database/seeds:/docker-entrypoint-initdb.d/2-seeds
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U signbuddy"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ai-service:
+    build:
+      context: ../../ai-service
+      dockerfile: ../infra/docker/Dockerfile.ai-service
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: ../infra/docker/Dockerfile.backend
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://signbuddy:signbuddy_dev_password@postgres:5432/signbuddy
+      JWT_ACCESS_SECRET: change_me_access_secret
+      JWT_REFRESH_SECRET: change_me_refresh_secret
+      AI_SERVICE_URL: http://ai-service:8000
+      CORS_ORIGIN: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-service:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: ../infra/docker/Dockerfile.frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+        NEXT_PUBLIC_WS_URL: ws://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  signbuddy_pg_data:

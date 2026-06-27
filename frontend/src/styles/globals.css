@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --text-scale: 1;
+}
+
+/* Adjustable text size — driven by user accessibility settings, applied at <html> level */
+html[data-text-size="small"] { --text-scale: 0.9; }
+html[data-text-size="medium"] { --text-scale: 1; }
+html[data-text-size="large"] { --text-scale: 1.2; }
+html[data-text-size="extra_large"] { --text-scale: 1.45; }
+
+html {
+  font-size: calc(16px * var(--text-scale));
+}
+
+body {
+  @apply bg-canvas text-ink-900 font-body antialiased;
+}
+
+html.dark body {
+  @apply bg-canvas-dark text-white;
+}
+
+/* High contrast mode: stronger borders, no subtle grays */
+html[data-high-contrast="true"] {
+  --tw-text-opacity: 1;
+}
+html[data-high-contrast="true"] .hc-border {
+  border-width: 2px !important;
+  border-color: currentColor !important;
+}
+
+/* Respect reduced motion at the OS level AND the in-app toggle */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* Visible focus ring everywhere — never remove focus outlines */
+:focus-visible {
+  outline: 3px solid #0E7C7B;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+html.dark :focus-visible {
+  outline-color: #5FD4D1;
+}
+
+/* Large, forgiving tap targets as a baseline */
+button, a[role="button"] {
+  min-height: 44px;
+}
