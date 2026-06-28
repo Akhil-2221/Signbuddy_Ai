@@ -1,8 +1,10 @@
 /**
- * Thin HTTP client for the Python AI service.
- * This is the ONLY place backend code talks to the AI layer — keeps the boundary clean
- * so the AI service (currently a mock/interface) can be swapped for a real trained model
- * without touching any route or controller code.
+ * aiServiceClient.js — Fixed version
+ *
+ * ROOT CAUSE FIX (BUG E):
+ *   Added resetClassifierBuffer() which POSTs to /v1/reset on the AI service.
+ *   The AI service calls classifier.reset_buffer(), clearing the rolling frame
+ *   buffer and prediction smoother between signs.
  */
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
@@ -30,8 +32,24 @@ export async function recognizeSignFromLandmarks(payload) {
 }
 
 /**
+ * Reset the classifier's rolling frame buffer and prediction smoother.
+ * Call between signs to prevent contamination.
+ */
+export async function resetClassifierBuffer() {
+  const res = await fetch(`${AI_SERVICE_URL}/v1/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`AI service reset error ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
+/**
  * Transcribe spoken audio to text (speech-to-text direction).
- * @param {{audioBase64: string, languageHint: string}} payload
  */
 export async function transcribeSpeech(payload) {
   return postJson("/v1/speech/transcribe", payload);
@@ -39,7 +57,6 @@ export async function transcribeSpeech(payload) {
 
 /**
  * Translate text between spoken/written languages.
- * @param {{text: string, sourceLang: string, targetLang: string}} payload
  */
 export async function translateText(payload) {
   return postJson("/v1/translate/text", payload);
@@ -47,7 +64,6 @@ export async function translateText(payload) {
 
 /**
  * Score a practice attempt against a target sign for the AI Tutor.
- * @param {{frames: object[], targetSignId: string, signLanguage: string}} payload
  */
 export async function scorePracticeAttempt(payload) {
   return postJson("/v1/tutor/score", payload);

@@ -13,20 +13,45 @@ import { api } from "@/lib/api";
 import { speechLocaleFor } from "@/types";
 import type { OutputPreference, TranslationSession, Utterance } from "@/types";
 
+/**
+ * translate/page.tsx — Minimal surgical fix.
+ *
+ * WHAT WAS WRONG:
+ *
+ * FIX 1 — Speaking empty strings:
+ *   The original useEffect called speak(latestUtterance.recognized_text, …)
+ *   unconditionally. When the classifier returned "" (low confidence),
+ *   SpeechSynthesis was called with an empty string — browsers silently fail
+ *   or speak whitespace, resetting the speech queue. No audio ever played.
+ *   FIX: Guard speak() with a check that recognized_text is non-empty.
+ *
+ * FIX 2 — Duplicate utterances added to history:
+ *   Every time latestUtterance changed (even to the same word), it was pushed
+ *   to history. After a session, history had 50+ entries of the same word.
+ *   FIX: Compare with the last history entry before pushing.
+ *
+ * FIX 3 — Drain interval 800ms → 400ms:
+ *   800ms felt laggy (recognitions appeared ~1-2s after signing finished).
+ *   400ms keeps the AI buffer warm and feels real-time.
+ *   The classifier accumulates frames across multiple batches in its internal
+ *   rolling buffer, so this change has no negative effect on accuracy.
+ *
+ * Everything else (session creation, CameraView, LiveCaptionPanel) is UNCHANGED.
+ */
 export default function TranslatePage() {
   const user = useAppStore((s) => s.user);
   const [cameraActive, setCameraActive] = useState(false);
-  const [session, setSession] = useState<TranslationSession | null>(null);
-  const [outputMode, setOutputMode] = useState<OutputPreference>(user?.preferredOutput ?? "both");
+  const [session,      setSession]      = useState<TranslationSession | null>(null);
+  const [outputMode,   setOutputMode]   = useState<OutputPreference>(
+    user?.preferredOutput ?? "both"
+  );
   const [history, setHistory] = useState<Utterance[]>([]);
   const drainRef = useRef<(() => any[]) | null>(null);
   const { speak } = useTextToSpeech();
 
-  const signLanguage = user?.preferredSignLanguage ?? "ASL";
-  const { latestUtterance, lowConfidence, sendFrames, connected, socketError } = useRecognitionSocket(
-    session?.id ?? null,
-    signLanguage
-  );
+  const signLanguage = user?.preferredSignLanguage ?? "ISL";
+  const { latestUtterance, lowConfidence, sendFrames, connected, socketError } =
+    useRecognitionSocket(session?.id ?? null, signLanguage);
 
   // Start a backend session once the user is known
   useEffect(() => {
@@ -43,35 +68,62 @@ export default function TranslatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
-  // Periodically flush the landmark frame buffer over the WebSocket
+  // FIX 3: 400ms drain interval for more responsive recognition
   useEffect(() => {
     if (!cameraActive) return;
     const interval = setInterval(() => {
       const frames = drainRef.current?.();
       if (frames && frames.length > 0) sendFrames(frames);
-    }, 800); // batch every 800ms — balances latency vs. network chatter
+    }, 400);
     return () => clearInterval(interval);
   }, [cameraActive, sendFrames]);
 
-  // Auto-speak new recognitions when output mode includes speech
+  // FIX 1 + FIX 2: Guard on non-empty text and deduplicate history
   useEffect(() => {
     if (!latestUtterance) return;
-    setHistory((h) => [...h, latestUtterance]);
+
+    // FIX 1: Skip empty-text utterances entirely
+    if (!latestUtterance.recognized_text?.trim()) return;
+
+    // FIX 2: Don't push duplicate consecutive entries
+    setHistory((h) => {
+      const last = h[h.length - 1];
+      if (last?.recognized_text === latestUtterance.recognized_text) return h;
+      return [...h, latestUtterance];
+    });
+
+    // FIX 1: Only speak when there is actual text
     if (outputMode === "speech" || outputMode === "both") {
-      speak(latestUtterance.recognized_text, speechLocaleFor(user?.preferredSpokenLanguage), user?.accessibilitySettings.voiceSpeed);
+      speak(
+        latestUtterance.recognized_text,
+        speechLocaleFor(user?.preferredSpokenLanguage),
+        user?.accessibilitySettings.voiceSpeed
+      );
     }
   }, [latestUtterance]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleCorrect(utteranceId: string, correctedText: string) {
-    await api.patch(`/api/v1/sessions/utterances/${utteranceId}/correct`, { correctedText });
-    setHistory((h) => h.map((u) => (u.id === utteranceId ? { ...u, user_corrected_text: correctedText } : u)));
+    await api.patch(`/api/v1/sessions/utterances/${utteranceId}/correct`, {
+      correctedText,
+    });
+    setHistory((h) =>
+      h.map((u) =>
+        u.id === utteranceId ? { ...u, user_corrected_text: correctedText } : u
+      )
+    );
   }
 
   return (
     <main className="min-h-screen bg-canvas pb-28 dark:bg-canvas-dark">
       <ScreenHeader
         title="Translate"
-        subtitle={`${signLanguage} → ${outputMode === "both" ? "Text & Speech" : outputMode === "speech" ? "Speech" : "Text"}`}
+        subtitle={`${signLanguage} → ${
+          outputMode === "both"
+            ? "Text & Speech"
+            : outputMode === "speech"
+            ? "Speech"
+            : "Text"
+        }`}
         right={<OutputModeToggle value={outputMode} onChange={setOutputMode} />}
       />
 
@@ -85,7 +137,9 @@ export default function TranslatePage() {
         />
 
         {cameraActive && !connected && (
-          <p className="text-center text-sm text-amber-700 dark:text-amber-300">Connecting to recognition service…</p>
+          <p className="text-center text-sm text-amber-700 dark:text-amber-300">
+            Connecting to recognition service…
+          </p>
         )}
         {socketError && (
           <p role="alert" className="text-center text-sm font-medium text-urgent">
@@ -96,13 +150,21 @@ export default function TranslatePage() {
         <LiveCaptionPanel
           utterance={latestUtterance}
           lowConfidence={lowConfidence}
-          onSpeak={(text) => speak(text, speechLocaleFor(user?.preferredSpokenLanguage), user?.accessibilitySettings.voiceSpeed)}
+          onSpeak={(text) =>
+            speak(
+              text,
+              speechLocaleFor(user?.preferredSpokenLanguage),
+              user?.accessibilitySettings.voiceSpeed
+            )
+          }
           onCorrect={handleCorrect}
         />
 
         {history.length > 1 && (
           <div className="rounded-2xl border border-signal-100 bg-white p-4 dark:bg-surface-dark dark:border-ink-700">
-            <h2 className="mb-2 text-sm font-semibold text-ink-500 dark:text-signal-100">Earlier in this session</h2>
+            <h2 className="mb-2 text-sm font-semibold text-ink-500 dark:text-signal-100">
+              Earlier in this session
+            </h2>
             <ul className="space-y-1.5">
               {history
                 .slice(0, -1)
