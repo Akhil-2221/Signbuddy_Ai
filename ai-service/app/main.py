@@ -1,25 +1,15 @@
 """
-app/main.py — Fixed version.
+app/main.py — Production fix.
 
-WHAT WAS WRONG:
+CAUSE 12 — MockSignClassifier was hardcoded in production
+  The original main.py had: classifier = MockSignClassifier()
+  The real trained model (best_model.pth + labels.json) was never used.
+  MockSignClassifier returns random words — explaining the Turtle/Hug/Umbrella
+  problem. It was never swapped for the real classifier.
+  FIX: Load RealSignClassifier first. Fall back to Mock ONLY if model files
+  are genuinely missing, with a clear error log so it's never silent.
 
-FIX 1 — MockSignClassifier was still being used in production:
-  The original main.py had `classifier = MockSignClassifier()` hardcoded.
-  The real trained model (best_model.pth) was never loaded.
-  FIX: Try to load RealSignClassifier first; fall back to Mock only if
-  model files are genuinely missing, with a clear warning logged.
-
-FIX 2 — /v1/recognize/landmarks returned wrong field names:
-  The backend aiServiceClient.js reads: aiResult.text, aiResult.confidence,
-  aiResult.latencyMs. The original RecognizeResponse used those names correctly,
-  but after the previous fix attempt the mapping broke.
-  FIX: Verified field names match exactly what the backend client expects.
-
-FIX 3 — Added /v1/reset endpoint:
-  Called by the frontend between signs to clear the classifier's rolling
-  frame buffer and prediction smoother, preventing sign contamination.
-
-Everything else (speech transcription, translation, tutor scoring) is UNCHANGED.
+ADDITIONAL: Added /v1/labels and /v1/reset endpoints used by the frontend.
 """
 
 from __future__ import annotations
@@ -32,42 +22,46 @@ from pydantic import BaseModel
 
 from pipeline.interfaces import LandmarkFrame
 
-# ── Classifier loading — try real model first ────────────────────────────────
-_classifier_type = "mock"
+# ── Load the real trained classifier ────────────────────────────────────────
+_classifier_type = "unknown"
 try:
     from pipeline.real_sign_classifier import RealSignClassifier
     classifier = RealSignClassifier()
     _classifier_type = "real"
     logging.getLogger(__name__).info(
-        "✓ RealSignClassifier loaded — model is active."
+        "✓ RealSignClassifier loaded successfully — real-time recognition active."
     )
-except FileNotFoundError as _e:
+except FileNotFoundError as _exc:
     logging.getLogger(__name__).warning(
-        "⚠ RealSignClassifier not found (%s).\n"
+        "⚠ Model files not found (%s).\n"
         "  Falling back to MockSignClassifier.\n"
-        "  Run the training pipeline to produce best_model.pth and labels.json.",
-        _e,
+        "  To enable real recognition:\n"
+        "    python -m training.extract_landmarks\n"
+        "    python -m training.prepare_dataset\n"
+        "    python -m training.train",
+        _exc,
     )
     from pipeline.sign_classifier import MockSignClassifier
     classifier = MockSignClassifier()
-except Exception as _e:
+    _classifier_type = "mock"
+except Exception as _exc:
     logging.getLogger(__name__).error(
-        "✗ RealSignClassifier failed to load: %s\n"
-        "  Falling back to MockSignClassifier.",
-        _e,
+        "✗ RealSignClassifier failed to load: %s\n  Falling back to MockSignClassifier.",
+        _exc,
     )
     from pipeline.sign_classifier import MockSignClassifier
     classifier = MockSignClassifier()
+    _classifier_type = "mock_fallback"
 
 from pipeline.speech_pipeline import transcribe_audio, translate_text
 
+log = logging.getLogger(__name__)
+
 app = FastAPI(
     title="SignBuddy AI Service",
-    description=f"Sign recognition — classifier: {_classifier_type}",
+    description=f"ISL recognition — classifier: {_classifier_type}",
     version="2.0.0",
 )
-
-log = logging.getLogger(__name__)
 
 
 # ── Health ───────────────────────────────────────────────────────────────────
@@ -81,8 +75,23 @@ def health():
 
 @app.get("/v1/labels")
 def get_labels():
+    """Return all recognizable sign labels for the cheat sheet UI."""
     labels = getattr(classifier, "labels", [])
     return {"labels": labels, "count": len(labels)}
+
+
+# ── Buffer reset (called between signs) ─────────────────────────────────────
+
+@app.post("/v1/reset")
+def reset_buffer():
+    """Clear rolling frame buffer + smoother between signs."""
+    try:
+        if hasattr(classifier, "reset_buffer"):
+            classifier.reset_buffer()
+        return {"status": "ok"}
+    except Exception as exc:
+        log.warning("Buffer reset error (non-fatal): %s", exc)
+        return {"status": "ok"}
 
 
 # ── Sign recognition ─────────────────────────────────────────────────────────
@@ -137,20 +146,6 @@ def recognize_landmarks(req: RecognizeRequest):
             for t, c in (result.alternatives or [])
         ],
     )
-
-
-# ── Buffer reset (called between signs) ─────────────────────────────────────
-
-@app.post("/v1/reset")
-def reset_buffer():
-    """Clear the rolling frame buffer and smoother between signs."""
-    try:
-        if hasattr(classifier, "reset_buffer"):
-            classifier.reset_buffer()
-        return {"status": "ok"}
-    except Exception as exc:
-        log.warning("Buffer reset error (non-fatal): %s", exc)
-        return {"status": "ok"}
 
 
 # ── Speech-to-text ───────────────────────────────────────────────────────────

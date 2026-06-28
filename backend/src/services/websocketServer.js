@@ -5,32 +5,24 @@ import { query } from "../db/pool.js";
 import { logger } from "../utils/logger.js";
 
 /**
- * websocketServer.js — Minimal fix from original.
+ * websocketServer.js — Production fix.
  *
- * WHAT WAS WRONG:
+ * CAUSE 10 ── Empty text inserted into DB and sent to frontend
+ *   When the AI returns text="" (low-confidence suppression), the original
+ *   code still did INSERT INTO session_utterances with recognized_text=""
+ *   and sent the result over WebSocket. The frontend received it and called
+ *   setLatestUtterance() with empty text, blanking the caption panel.
+ *   FIX: If text is empty/whitespace, return early. No DB write. No WS send.
+ *   The frontend keeps the last valid word visible.
  *
- * FIX 1 — Empty text was being inserted into DB and sent to frontend:
- *   When the AI classifier suppressed a low-confidence prediction, it returned
- *   text="". The backend still did a DB INSERT with recognized_text="" and
- *   sent the result over WebSocket. The frontend received it, called
- *   setLatestUtterance(), and blanked the caption panel — erasing the last
- *   valid recognized word from the screen.
- *   FIX: If aiResult.text is empty/whitespace, skip the DB insert and return
- *   early. The frontend keeps the last valid word visible.
- *
- * FIX 2 — LOW_CONFIDENCE_THRESHOLD = 0.6 was too high:
- *   With 60 ISL classes, a correct softmax peak is typically 0.25–0.55.
- *   A backend threshold of 0.6 caused most correct predictions to be flagged
- *   as low-confidence and trigger the "fallbackSuggested" yellow UI state,
- *   confusing users into thinking the recognition failed.
- *   FIX: Lower to 0.30 to match realistic model confidence ranges.
- *   The AI service already gates at 0.25 internally; this threshold is only
- *   for the UI "yellow" low-confidence indicator — not for suppression.
- *
- * Everything else (auth, message handling, DB schema) is UNCHANGED.
+ * CAUSE 11 ── LOW_CONFIDENCE_THRESHOLD = 0.6 too high
+ *   With 60 ISL classes, correct softmax peaks are typically 0.25–0.55.
+ *   The backend flagged most correct predictions as low-confidence,
+ *   triggering the yellow "uncertain" UI state and confusing users.
+ *   FIX: Lower to 0.30. The AI service gates hard at 0.25 — this threshold
+ *   only controls whether the UI shows the yellow "uncertain" indicator.
  */
 
-// Lowered from 0.6 — with 60 classes, correct peaks are typically 0.25-0.55
 const LOW_CONFIDENCE_THRESHOLD = 0.30;
 
 export function attachWebSocketServer(httpServer) {
@@ -69,10 +61,9 @@ export function attachWebSocketServer(httpServer) {
           sessionId:    msg.sessionId,
         });
 
-        // FIX 1: Skip empty results — classifier suppressed this prediction.
-        // Do NOT insert into DB and do NOT send to frontend.
-        // The frontend will keep the last valid word visible.
-        if (!aiResult.text || aiResult.text.trim() === "") {
+        // FIX 10: Skip empty results entirely — no DB write, no WS send.
+        // The frontend will keep the last valid word on screen.
+        if (!aiResult.text || !aiResult.text.trim()) {
           return;
         }
 

@@ -13,39 +13,38 @@ interface RecognitionMessage {
 }
 
 /**
- * useRecognitionSocket — Fixed version (minimal changes from original).
+ * useRecognitionSocket — Production fix.
  *
- * WHAT WAS WRONG:
+ * CAUSE 5 ── Empty-text utterances wiped the caption panel
+ *   When the AI classifier suppressed a low-confidence result (text=""),
+ *   the backend still sent it over WebSocket. setLatestUtterance() was
+ *   called with empty text, blanking whatever word was displayed.
+ *   The user saw the word flash and disappear, or the panel stayed blank.
+ *   FIX: Only call setLatestUtterance() when recognized_text is non-empty.
  *
- * FIX 1 — Empty text utterances were shown / replacing valid predictions:
- *   When the AI classifier returns "" (low confidence suppressed), the backend
- *   was still inserting a DB row and sending it over WebSocket. The frontend
- *   then called setLatestUtterance() with an utterance whose recognized_text=""
- *   — wiping the previously displayed word. The UI went blank between signs.
- *   FIX: Skip setLatestUtterance() when recognized_text is empty or whitespace.
+ * CAUSE 6 ── No WebSocket reconnection after drop
+ *   If the backend restarted, the connection was lost permanently.
+ *   FIX: Exponential-backoff auto-reconnect (max 5 attempts, max 8s delay).
  *
- * FIX 2 — WebSocket never reconnected after a disconnect:
- *   The original code had no reconnect logic. If the backend restarted or the
- *   connection dropped briefly, the user had to refresh the page.
- *   FIX: Add exponential-backoff auto-reconnect (max 5 attempts, max 8s delay).
- *   This prevents the "Connecting..." spinner getting stuck forever.
- *
- * Everything else (sendFrames, sessionId dependency, error states) is UNCHANGED.
+ * CAUSE 7 ── TTS was called with empty string
+ *   translate/page.tsx called speak(latestUtterance.recognized_text, ...)
+ *   even when text was "". SpeechSynthesis with empty text fails silently
+ *   or resets the queue, preventing subsequent speaks from firing.
+ *   FIX: Guard in translate/page.tsx (see that file).
  */
 export function useRecognitionSocket(sessionId: string | null, signLanguage: SignLanguage) {
-  const wsRef            = useRef<WebSocket | null>(null);
-  const [connected, setConnected]           = useState(false);
+  const wsRef              = useRef<WebSocket | null>(null);
+  const [connected, setConnected]             = useState(false);
   const [latestUtterance, setLatestUtterance] = useState<Utterance | null>(null);
-  const [lowConfidence, setLowConfidence]   = useState(false);
-  const [socketError, setSocketError]       = useState<string | null>(null);
-  const sequenceRef      = useRef(0);
-  const reconnectRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const attemptsRef      = useRef(0);
-  const mountedRef       = useRef(true);
+  const [lowConfidence, setLowConfidence]     = useState(false);
+  const [socketError, setSocketError]         = useState<string | null>(null);
+  const sequenceRef    = useRef(0);
+  const attemptsRef    = useRef(0);
+  const reconnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef     = useRef(true);
 
   const connect = useCallback(() => {
-    if (!sessionId) return;
-    if (!mountedRef.current) return;
+    if (!sessionId || !mountedRef.current) return;
 
     const token =
       typeof window !== "undefined"
@@ -66,18 +65,17 @@ export function useRecognitionSocket(sessionId: string | null, signLanguage: Sig
       if (!mountedRef.current) return;
       setConnected(true);
       setSocketError(null);
-      attemptsRef.current = 0;  // reset backoff counter on successful connect
+      attemptsRef.current = 0;
     };
 
     ws.onclose = () => {
       if (!mountedRef.current) return;
       setConnected(false);
-
-      // FIX 2: Auto-reconnect with exponential backoff
+      // FIX 6: exponential backoff reconnect
       if (attemptsRef.current < 5) {
-        const delay = Math.min(1000 * Math.pow(2, attemptsRef.current), 8000);
+        const delay = Math.min(500 * 2 ** attemptsRef.current, 8000);
         attemptsRef.current++;
-        reconnectRef.current = setTimeout(() => {
+        reconnTimerRef.current = setTimeout(() => {
           if (mountedRef.current) connect();
         }, delay);
       } else {
@@ -86,8 +84,7 @@ export function useRecognitionSocket(sessionId: string | null, signLanguage: Sig
     };
 
     ws.onerror = () => {
-      if (!mountedRef.current) return;
-      setSocketError("Connection error — retrying…");
+      if (mountedRef.current) setSocketError("Connection error — retrying…");
     };
 
     ws.onmessage = (event) => {
@@ -96,13 +93,9 @@ export function useRecognitionSocket(sessionId: string | null, signLanguage: Sig
         const msg: RecognitionMessage = JSON.parse(event.data);
 
         if (msg.type === "recognition_result" && msg.utterance) {
-          // FIX 1: Only update UI when there is actual text.
-          // Empty string means the AI suppressed a low-confidence result —
-          // keep the previous word on screen rather than blanking it.
-          if (
-            msg.utterance.recognized_text &&
-            msg.utterance.recognized_text.trim() !== ""
-          ) {
+          // FIX 5: Only update when there is real text.
+          // Empty string = classifier suppressed this frame. Keep last word visible.
+          if (msg.utterance.recognized_text?.trim()) {
             setLatestUtterance(msg.utterance);
             setLowConfidence(!!msg.fallbackSuggested);
           }
@@ -121,7 +114,7 @@ export function useRecognitionSocket(sessionId: string | null, signLanguage: Sig
     connect();
     return () => {
       mountedRef.current = false;
-      if (reconnectRef.current) clearTimeout(reconnectRef.current);
+      if (reconnTimerRef.current) clearTimeout(reconnTimerRef.current);
       wsRef.current?.close();
       wsRef.current = null;
     };

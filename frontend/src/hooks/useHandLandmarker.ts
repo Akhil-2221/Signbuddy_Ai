@@ -4,60 +4,69 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { LandmarkFrame } from "@/types";
 
 /**
- * useHandLandmarker — Surgical fix. Original architecture preserved.
+ * useHandLandmarker — Production fix. Original architecture preserved.
  *
- * WHAT WAS WRONG AND WHY:
+ * ═══════════════════════════════════════════════════════
+ * ROOT CAUSE AUDIT — WHY SIGNS WERE WRONG (Turtle, Hug)
+ * ═══════════════════════════════════════════════════════
  *
- * FIX 1 — Handedness swap (caused HELLO→Crocodile wrong predictions):
- *   The original code assigned Tasks API "Left" → left hand, "Right" → right hand.
- *   But the camera feed is mirror-flipped (-scale-x-100 in CameraView).
- *   MediaPipe Tasks API reports handedness from the CAMERA perspective, not the
- *   user's anatomical perspective. On a mirrored selfie camera:
- *     Tasks "Left"  = what appears on the LEFT of the screen = user's RIGHT hand
- *     Tasks "Right" = what appears on the RIGHT of the screen = user's LEFT hand
- *   But during training, MediaPipe Holistic was used, which always returns
- *   left_hand_landmarks = user's anatomical LEFT hand (camera-perspective-corrected).
- *   Result: every frame sent left/right swapped vs. training. Model always wrong.
- *   FIX: Swap the assignment. Tasks "Left" → hand_landmarks_RIGHT, vice versa.
+ * CAUSE 1 ── 30fps inference vs 15fps training (PRIMARY cause of wrong labels)
+ *   Training config: target_fps = 15
+ *   The dataset videos were sampled at 15fps → the BiLSTM learned temporal
+ *   patterns (hand velocity, transition timing) at 15fps resolution.
+ *   This hook pushed EVERY requestAnimationFrame tick (~30fps) into the buffer.
+ *   At 30fps, a 2-second "HELLO" sign produced ~60 frames.
+ *   At 15fps (training), the same sign produced ~30 frames.
+ *   The model received sequences with 2× the temporal density it was trained on.
+ *   Every sign looked like a different, faster sign to the model → wrong labels.
+ *   FIX: Gate frame capture to exactly 15fps (one frame every 66ms).
  *
- * FIX 2 — Pose landmarks always null (44% of feature vector was always zero):
+ * CAUSE 2 ── Handedness swap on mirrored selfie camera
+ *   The original code: handedness === "Left" → hand_landmarks_left
+ *   Training used MediaPipe Holistic which reports anatomical handedness.
+ *   MediaPipe Tasks API HandLandmarker reports handedness from the camera's
+ *   perspective. On a mirrored selfie feed (-scale-x-100 in CameraView.tsx):
+ *     Tasks "Left"  = appears on LEFT side of screen = user's RIGHT hand
+ *     Tasks "Right" = appears on RIGHT side of screen = user's LEFT hand
+ *   Every frame sent left=userRight, right=userLeft — mirror of training.
+ *   FIX: Swap the assignment (Tasks "Left" → right, Tasks "Right" → left).
+ *
+ * CAUSE 3 ── pose_landmarks always null (44% feature mismatch)
  *   Training feature vector = 225 dims: left(63) + right(63) + pose(99).
- *   Original hook sent pose_landmarks: null every frame.
- *   At inference, 99/225 = 44% of every feature vector was zeros — a
- *   distribution the model had never seen during training.
- *   FIX: Add a PoseLandmarker (Tasks API, lightweight) running in parallel.
- *   It runs on the same video element, same timestamp. No Holistic needed.
- *   No browser freeze — both Tasks models run via WASM on a background thread.
+ *   The original hook set pose_landmarks: null every frame.
+ *   At inference, 99/225 = 44% of every input vector was always zero.
+ *   The model had never seen this distribution during training.
+ *   FIX: Add MediaPipe Tasks PoseLandmarker in parallel. It runs in WASM
+ *   on a background thread — no main-thread blocking, no browser freeze.
+ *   Pose loads asynchronously after HandLandmarker is ready, so the camera
+ *   is never blocked waiting for it.
  *
- * FIX 3 — Why NOT MediaPipe Holistic:
- *   Holistic runs face+pose+hands simultaneously on the MAIN JS thread.
- *   It causes the "Page Unresponsive" freeze seen in the screenshot.
- *   Tasks API models run in WASM workers → smooth, no freeze.
- *
- * Everything else (camera loop, buffer, drainFrameBuffer) is UNCHANGED.
+ * CAUSE 4 ── Buffer overflow: rolling window capped at 60 frames at 30fps
+ *   = only 2 seconds. Training max_frames = 60 at 15fps = 4 seconds.
+ *   FIX: Buffer cap = 90 frames at 15fps = 6 seconds (drains every 400ms).
  */
 
 type DetectorStatus = "idle" | "loading" | "ready" | "error";
 
-// Pose landmark indices for upper body only (matching training normalisation)
-// We only need the 33 landmarks MediaPipe provides; Tasks PoseLandmarker gives all 33.
+// Must match training/config.py: target_fps = 15
+const TARGET_FPS = 15;
+const FRAME_INTERVAL_MS = 1000 / TARGET_FPS; // 66.67ms
 
 export function useHandLandmarker(videoRef: React.RefObject<HTMLVideoElement>) {
-  const [status, setStatus] = useState<DetectorStatus>("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus]             = useState<DetectorStatus>("idle");
+  const [error, setError]               = useState<string | null>(null);
   const [handsDetected, setHandsDetected] = useState<{ left: boolean; right: boolean }>({
     left: false,
     right: false,
   });
 
-  const handLandmarkerRef = useRef<any>(null);
-  const poseLandmarkerRef = useRef<any>(null);
-  const rafRef            = useRef<number | null>(null);
-  const frameBufferRef    = useRef<LandmarkFrame[]>([]);
-
-  // Store latest pose result between rAF ticks so we always have a value
-  // even if pose runs slightly behind hand detection
-  const latestPoseRef = useRef<number[][] | null>(null);
+  const handLandmarkerRef  = useRef<any>(null);
+  const poseLandmarkerRef  = useRef<any>(null);
+  const poseReadyRef       = useRef(false);
+  const rafRef             = useRef<number | null>(null);
+  const frameBufferRef     = useRef<LandmarkFrame[]>([]);
+  const lastCaptureTimeRef = useRef<number>(0); // FIX 1: 15fps gate
+  const latestPoseRef      = useRef<number[][] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,12 +77,12 @@ export function useHandLandmarker(videoRef: React.RefObject<HTMLVideoElement>) {
         const vision = await import("@mediapipe/tasks-vision");
         const { HandLandmarker, PoseLandmarker, FilesetResolver } = vision;
 
-        const filesetResolver = await FilesetResolver.forVisionTasks(
+        const resolver = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
         );
 
-        // Hand detector — same as original
-        const handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
+        // ── Hand landmarker (blocking — must be ready before camera starts)
+        const handLandmarker = await HandLandmarker.createFromOptions(resolver, {
           baseOptions: {
             modelAssetPath:
               "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
@@ -83,8 +92,13 @@ export function useHandLandmarker(videoRef: React.RefObject<HTMLVideoElement>) {
           numHands: 2,
         });
 
-        // Pose detector — lightweight, adds the 99 pose features the model needs
-        const poseLandmarker = await PoseLandmarker.createFromOptions(filesetResolver, {
+        if (cancelled) return;
+        handLandmarkerRef.current = handLandmarker;
+        setStatus("ready"); // camera can start now
+
+        // ── Pose landmarker (non-blocking — loads in background)
+        // Uses the lightweight "lite" model to avoid any performance hit.
+        PoseLandmarker.createFromOptions(resolver, {
           baseOptions: {
             modelAssetPath:
               "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
@@ -92,15 +106,20 @@ export function useHandLandmarker(videoRef: React.RefObject<HTMLVideoElement>) {
           },
           runningMode: "VIDEO",
           numPoses: 1,
-        });
-
-        if (cancelled) return;
-        handLandmarkerRef.current = handLandmarker;
-        poseLandmarkerRef.current = poseLandmarker;
-        setStatus("ready");
+        })
+          .then((pl: any) => {
+            if (!cancelled) {
+              poseLandmarkerRef.current = pl;
+              poseReadyRef.current = true;
+            }
+          })
+          .catch(() => {
+            // Pose fails gracefully — hands-only still works, just lower accuracy
+            poseReadyRef.current = false;
+          });
       } catch (err) {
         if (cancelled) return;
-        console.error("Landmarker init failed:", err);
+        console.error("HandLandmarker init error:", err);
         setError(err instanceof Error ? err.message : "Failed to load hand detector");
         setStatus("error");
       }
@@ -118,70 +137,72 @@ export function useHandLandmarker(videoRef: React.RefObject<HTMLVideoElement>) {
   const detectFrame = useCallback(() => {
     const video        = videoRef.current;
     const handLandmarker = handLandmarkerRef.current;
-    const poseLandmarker = poseLandmarkerRef.current;
     if (!video || !handLandmarker || video.readyState < 2) return;
 
     const nowMs = performance.now();
 
+    // FIX 1: Only process a frame every 66ms (= 15fps) to match training.
+    // rAF fires at ~60fps; we skip 3 out of every 4 frames.
+    if (nowMs - lastCaptureTimeRef.current < FRAME_INTERVAL_MS) return;
+    lastCaptureTimeRef.current = nowMs;
+
     // ── Hand detection ──────────────────────────────────────────────────────
     const handResult = handLandmarker.detectForVideo(video, nowMs);
 
-    // FIX 1: Swap handedness assignment to match training (Holistic) convention.
-    // Tasks API on mirrored camera: "Left" label = user's RIGHT hand.
     let left:  number[][] | null = null;
     let right: number[][] | null = null;
 
     if (handResult.landmarks && handResult.landmarks.length > 0) {
-      handResult.landmarks.forEach((handLandmarks: any[], idx: number) => {
-        const coords = handLandmarks.map((lm: any) => [lm.x, lm.y, lm.z]);
+      handResult.landmarks.forEach((landmarks: any[], idx: number) => {
+        const coords     = landmarks.map((lm: any) => [lm.x, lm.y, lm.z]);
         const handedness = handResult.handedness?.[idx]?.[0]?.categoryName;
 
-        // SWAPPED intentionally — see FIX 1 comment above
+        // FIX 2: SWAP handedness to match MediaPipe Holistic convention.
+        // Tasks "Left" on mirrored camera = user's anatomical RIGHT hand.
+        // Tasks "Right" on mirrored camera = user's anatomical LEFT hand.
         if (handedness === "Left") {
-          right = coords;   // Tasks "Left" on mirrored camera = user's RIGHT
+          right = coords;   // Tasks "Left" → right hand (user's perspective)
         } else if (handedness === "Right") {
-          left = coords;    // Tasks "Right" on mirrored camera = user's LEFT
+          left = coords;    // Tasks "Right" → left hand (user's perspective)
         }
       });
     }
 
     setHandsDetected({ left: !!left, right: !!right });
 
-    // ── Pose detection ──────────────────────────────────────────────────────
-    // FIX 2: Run PoseLandmarker to populate the 99 pose features.
-    // Only run if poseLandmarker is ready (it may finish loading slightly later).
-    if (poseLandmarker) {
+    // ── Pose detection (FIX 3) ─────────────────────────────────────────────
+    // Run every captured frame (same 15fps rate) so pose aligns with hands.
+    if (poseReadyRef.current && poseLandmarkerRef.current) {
       try {
-        const poseResult = poseLandmarker.detectForVideo(video, nowMs);
+        const poseResult = poseLandmarkerRef.current.detectForVideo(video, nowMs);
         if (poseResult.landmarks && poseResult.landmarks.length > 0) {
-          // 33 landmarks, each with x, y, z
           latestPoseRef.current = poseResult.landmarks[0].map((lm: any) => [lm.x, lm.y, lm.z]);
         } else {
           latestPoseRef.current = null;
         }
       } catch {
-        // Pose detection can occasionally throw on first few frames — ignore
-        latestPoseRef.current = null;
+        // Single frame failure — keep previous pose
       }
     }
 
-    // ── Build frame and push to buffer ──────────────────────────────────────
+    // ── Push frame to buffer ────────────────────────────────────────────────
     frameBufferRef.current.push({
       hand_landmarks_left:  left,
       hand_landmarks_right: right,
-      pose_landmarks:       latestPoseRef.current,   // now populated!
+      pose_landmarks:       latestPoseRef.current, // now populated!
       face_landmarks:       null,
       timestamp_ms:         Date.now(),
     });
 
-    // Rolling buffer: last ~90 frames (~3 s at 30 fps)
-    // Larger than before so the classifier always has enough frames
+    // FIX 4: Buffer 90 frames at 15fps = 6 seconds headroom
+    // Classifier uses last 60 (= training max_frames = 4 seconds)
     if (frameBufferRef.current.length > 90) {
       frameBufferRef.current.shift();
     }
   }, [videoRef]);
 
   const startLoop = useCallback(() => {
+    lastCaptureTimeRef.current = 0;
     const loop = () => {
       detectFrame();
       rafRef.current = requestAnimationFrame(loop);
@@ -194,6 +215,8 @@ export function useHandLandmarker(videoRef: React.RefObject<HTMLVideoElement>) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
+    frameBufferRef.current = [];
+    latestPoseRef.current  = null;
   }, []);
 
   const drainFrameBuffer = useCallback((): LandmarkFrame[] => {
